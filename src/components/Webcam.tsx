@@ -10,6 +10,7 @@ const videoConstraints = {
 
 const WebcamComponent = () => {
 	const webcamRef = useRef<Webcam>(null)
+	const linkDownloadRef = useRef<HTMLAnchorElement>(null)
 	const [mediaRecorder, setMediaRecorder] = useState<MediaRecorder>()
 	const [capturing, setCapturing] = useState(false)
 	const [recordedChunks, setRecordedChunks] = useState<BlobEvent[`data`][]>([])
@@ -44,17 +45,15 @@ const WebcamComponent = () => {
 	}
 
 	const handleDownload = () => {
-		if (recordedChunks.length) {
+		const linkDownload = linkDownloadRef.current
+		if (recordedChunks.length && linkDownload) {
 			const blob = new Blob(recordedChunks, {
 				type: `video/webm`
 			})
 			const url = URL.createObjectURL(blob)
-			const a = document.createElement(`a`)
-			document.body.appendChild(a)
-			a.style.display = `none`
-			a.href = url
-			a.download = `react-webcam-stream-capture.webm`
-			a.click()
+			linkDownload.href = url
+			linkDownload.download = `react-webcam-stream-capture.webm`
+			linkDownload.click()
 			window.URL.revokeObjectURL(url)
 			setRecordedChunks([])
 		}
@@ -77,7 +76,10 @@ const WebcamComponent = () => {
 					<Button onClick={handleStartCaptureClick}>Start Capture</Button>
 				)}
 			{recordedChunks.length > 0 && (
-				<Button onClick={handleDownload}>Download</Button>
+				<>
+					<Button onClick={handleDownload}>Download</Button>
+					<a ref={linkDownloadRef} className="hidden" href="#noLink">Download video</a>
+				</>
 			)}
 		</div>
 	)
