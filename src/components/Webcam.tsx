@@ -23,6 +23,8 @@ const WebcamComponent = () => {
 
 	const handleStartCaptureClick = () => {
 		const webcam = webcamRef.current
+		alert(webcam)
+		alert(webcam?.stream)
 		if (webcam && webcam.stream) {
 			setCapturing(true)
 			const localMediaRecorder = new MediaRecorder(webcam.stream, {
@@ -46,6 +48,8 @@ const WebcamComponent = () => {
 
 	const handleDownload = () => {
 		const linkDownload = linkDownloadRef.current
+		alert(linkDownload)
+		alert(recordedChunks.length)
 		if (recordedChunks.length && linkDownload) {
 			const blob = new Blob(recordedChunks, {
 				type: `video/webm`
